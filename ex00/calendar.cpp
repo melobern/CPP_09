@@ -6,7 +6,7 @@
 /*   By: mbernard <mbernard@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 09:07:06 by mbernard          #+#    #+#             */
-/*   Updated: 2024/10/07 12:19:06 by mbernard         ###   ########.fr       */
+/*   Updated: 2024/10/07 15:09:43 by mbernard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ bool isLeap(int year) {
 //  if (year == 0)
 //    throw NotExisingYearException();
   int abs_year = std::abs(year); 
+
   if (((abs_year % 4 == 0) && (abs_year % 100 != 0)) || (abs_year % 400 == 0)) {
     return (true);
   }
@@ -29,19 +30,24 @@ int days_in_month[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
 
 void add_days_to_date(int mm, int dd, int yy, int days_left_to_add) {
   int days_left_in_month = days_in_month[mm]-dd;
-  while (days_left_to_add > days_left_in_month) {
-    if (mm == 12) {
-      ++yy;
-      mm = 0;
+  if (days_left_to_add < days_left_in_month)
+    dd += days_left_to_add;
+  else {
+    while (days_left_to_add > days_left_in_month) {
+      if (mm == 12) {
+        ++yy;
+        mm = 0;
+      }
+      if (mm == 2 && isLeap(yy))
+        ++days_left_in_month;
+      ++mm;
+      if (mm == 2 && isLeap(yy))
+        ++days_left_in_month;
+      days_left_to_add -= days_left_in_month;
+      days_left_in_month = days_in_month[mm];
     }
-    if (isLeap(yy) && (mm == 2)) {
-      days_left_in_month++;
-    }
-    ++mm;
-    days_left_to_add -= days_left_in_month;
-    days_left_in_month = days_in_month[mm];
+    dd = days_left_to_add;
   }
-  dd += days_left_to_add;
   std::cout << "The new date is " << dd << " " << mm << " " << yy;
 }
 
@@ -68,7 +74,7 @@ bool dateIsWrong(int dd, int mm, int yy) {
     std::cerr << "Error: february can't have more than 29 days" << std::endl;
     return (true);
   }
-  if (mm == 3 && !isLeap(yy) && dd == 29) {
+  if (mm == 2 && !isLeap(yy) && dd == 29) {
     std::cerr << "Error: the year "<< yy << " isn't leap : ";
     std::cerr << "february can't have more than 28 days" << std::endl;
     return (true);
