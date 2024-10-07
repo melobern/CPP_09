@@ -6,7 +6,7 @@
 /*   By: mbernard <mbernard@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 09:07:06 by mbernard          #+#    #+#             */
-/*   Updated: 2024/10/07 15:15:36 by mbernard         ###   ########.fr       */
+/*   Updated: 2024/10/07 15:24:52 by mbernard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <utility>
+#include "../includes/Colors.hpp"
 
 bool isLeap(int year) {
 //  if (year == 0)
@@ -63,18 +64,17 @@ bool dateIsWrong(int dd, int mm, int yy) {
     return (true);
   }
   if (mm != 2 && mm > 0 && mm < 13 && dd > days_in_month[mm]) {
-    std::cerr << "Error: the month " << mm << " has only " << days_in_month[mm] << " days" << std::endl;
+    std::cerr << "Error: the month " << mm << " has only " << days_in_month[mm];
+    std::cerr << " days" << std::endl;
     return (true);
   }
-  if (mm == 4 && mm == 6 && mm == 9 && mm == 11 && dd == 31)
-    std::cerr << "Error: the month " << mm << " has only 30 days" << std::endl;
-  if (mm == 3 && dd > 29) {
-    std::cerr << "Error: february can't have more than 29 days" << std::endl;
-    return (true);
-  }
-  if (mm == 2 && !isLeap(yy) && dd == 29) {
+  if (mm == 2 && dd > 28 && !isLeap(yy)) {
     std::cerr << "Error: the year "<< yy << " isn't leap : ";
     std::cerr << "february can't have more than 28 days" << std::endl;
+    return (true);
+  }
+  if (mm == 2 && dd > 29) {
+    std::cerr << "Error: february can't have more than 29 days" << std::endl;
     return (true);
   }
   return (false);
