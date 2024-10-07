@@ -6,7 +6,7 @@
 /*   By: mbernard <mbernard@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 09:07:06 by mbernard          #+#    #+#             */
-/*   Updated: 2024/10/07 15:09:43 by mbernard         ###   ########.fr       */
+/*   Updated: 2024/10/07 15:15:36 by mbernard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ void add_days_to_date(int mm, int dd, int yy, int days_left_to_add) {
       if (mm == 2 && isLeap(yy))
         ++days_left_in_month;
       ++mm;
-      if (mm == 2 && isLeap(yy))
-        ++days_left_in_month;
       days_left_to_add -= days_left_in_month;
       days_left_in_month = days_in_month[mm];
     }
