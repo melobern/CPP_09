@@ -6,7 +6,7 @@
 #    By: mbernard <mbernard@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/24 21:33:43 by mbernard          #+#    #+#              #
-#    Updated: 2024/10/07 08:57:07 by mbernard         ###   ########.fr        #
+#    Updated: 2024/10/07 15:39:19 by mbernard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,8 +17,8 @@ MKDIR = mkdir -p
 RMDIR = rm -rf
 
 # ---------------------------------- Sources --------------------------------- #
-HEADER = BitcoinExchange
-SRCS = main BitcoinExchange
+HEADER = Colors Calendar # BitcoinExchange
+SRCS = main Calendar # BitcoinExchange
 
 # ---------------------------------- Repertories ----------------------------- #
 HEADERS_DIR = includes/

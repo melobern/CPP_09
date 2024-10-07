@@ -1,22 +1,22 @@
-/* ************************************************************************** */
+/* Copyright 2024 <mbernard>************************************************* */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   calendar.cpp                                       :+:      :+:    :+:   */
+/*   Calendar.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbernard <mbernard@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 09:07:06 by mbernard          #+#    #+#             */
-/*   Updated: 2024/10/07 15:24:52 by mbernard         ###   ########.fr       */
+/*   Updated: 2024/10/07 15:39:59 by mbernard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <cstdlib>
-#include <cmath>
-#include <utility>
 #include "../includes/Colors.hpp"
+#include "../includes/Calendar.hpp"
 
-bool isLeap(int year) {
+// TO PUT IN THE CALENDAR.HPP STRUCT/CLASS
+int days_in_month[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+static bool isLeap(const int year) {
 //  if (year == 0)
 //    throw NotExisingYearException();
   int abs_year = std::abs(year); 
@@ -26,8 +26,6 @@ bool isLeap(int year) {
   }
   return (false);
 }
-
-int days_in_month[13] = {0,31,28,31,30,31,30,31,31,30,31,30,31};
 
 void add_days_to_date(int mm, int dd, int yy, int days_left_to_add) {
   int days_left_in_month = days_in_month[mm]-dd;
@@ -50,7 +48,7 @@ void add_days_to_date(int mm, int dd, int yy, int days_left_to_add) {
   std::cout << "The new date is " << dd << " " << mm << " " << yy;
 }
 
-bool dateIsWrong(int dd, int mm, int yy) {
+bool dateIsWrong(const int dd, const int mm, const int yy) {
   if (yy == 0) {
     std::cerr << "Error: year 0 doesn't exist" << std::endl;
     return (true);
@@ -80,7 +78,7 @@ bool dateIsWrong(int dd, int mm, int yy) {
   return (false);
 }
 
-void printLeapYears(int min, int max) {
+void printLeapYears(const int min, const int max) {
     int yearFounds = 0;
 
     for (int x = min; x < max; x++) {
@@ -93,24 +91,3 @@ void printLeapYears(int min, int max) {
     }
 }
 
-int main(int ac, char **av) {
-  if (ac == 3) {
-    int minYY = std::atoi(av[1]);
-    int maxYY = std::atoi(av[2]);
-    if (minYY > maxYY)
-      std::swap(maxYY, minYY);
-    printLeapYears(minYY, maxYY);
-    return (0);
-  }
-
-  if (ac == 5) {
-    int day = std::atoi(av[1]);
-    int month = std::atoi(av[2]);
-    int year = std::atoi(av[3]);
-    int add = std::atoi(av[4]);
-    if (dateIsWrong(day, month, year))
-      return (1);
-    add_days_to_date(month, day, year, add);
-  }
-  return (0);
-}
