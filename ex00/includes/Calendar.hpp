@@ -6,7 +6,7 @@
 /*   By: mbernard <mbernard@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 09:07:06 by mbernard          #+#    #+#             */
-/*   Updated: 2024/10/07 21:41:50 by mbernard         ###   ########.fr       */
+/*   Updated: 2024/10/08 08:20:29 by mbernard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 
 class Calendar {
  private:
-  int                       _days_in_month[13];
+  static const int                       _daysInMonth[13];
 
   Calendar &operator=(const Calendar &src);
 
@@ -41,11 +41,12 @@ class Calendar {
   void printLeapYears(const int min, const int max);
   class wrongDateException : public std::exception {
    public:
-      virtual const char* what() const throw();
+     virtual const char* what() const throw();
   };
   class NotExistingYearException : public std::exception {
    public:
-      virtual const char* what() const throw();
+     virtual const char* what() const throw();
   };
 };
+
 #endif  // EX00_INCLUDES_CALENDAR_HPP_

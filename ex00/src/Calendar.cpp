@@ -6,27 +6,17 @@
 /*   By: mbernard <mbernard@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 09:07:06 by mbernard          #+#    #+#             */
-/*   Updated: 2024/10/07 21:37:27 by mbernard         ###   ########.fr       */
+/*   Updated: 2024/10/08 08:19:13 by mbernard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Colors.hpp"
 #include "../includes/Calendar.hpp"
 
+const int Calendar::_daysInMonth[13] = {0, 31, 28, 31, 30, 31, 30,
+                                           31, 31, 30, 31, 30, 31};
+
 Calendar::Calendar(void) {
-    this->_days_in_month[0] = 0;
-    this->_days_in_month[1] = 31;
-    this->_days_in_month[2] = 30;
-    this->_days_in_month[3] = 31;
-    this->_days_in_month[4] = 30;
-    this->_days_in_month[5] = 31;
-    this->_days_in_month[6] = 30;
-    this->_days_in_month[7] = 31;
-    this->_days_in_month[8] = 31;
-    this->_days_in_month[9] = 30;
-    this->_days_in_month[10] = 31;
-    this->_days_in_month[11] = 30;
-    this->_days_in_month[12] = 31;
     return;
 }
 
@@ -36,11 +26,7 @@ Calendar::Calendar(const Calendar &src) {
 }
 
 Calendar& Calendar::operator=(Calendar const &src) {
-    if (this != &src) {
-        for (int x = 0; x < 13; x++) {
-          this->_days_in_month[x] = src._days_in_month[x];
-        }
-    }
+    static_cast<void>(src);
     return (*this);
 }
 
@@ -60,24 +46,24 @@ bool Calendar::isLeap(const int year) {
   return (false);
 }
 
-void Calendar::add_days_to_date(int mm, int dd, int yy, int days_left_to_add) {
-  int days_left_in_month = this->_days_in_month[mm]-dd;
+void Calendar::add_days_to_date(int mm, int dd, int yy, int daysLeftToAdd) {
+  int daysLeftInMonth = this->_daysInMonth[mm]-dd;
 
-  if (days_left_to_add < days_left_in_month) {
-    dd += days_left_to_add;
+  if (daysLeftToAdd < daysLeftInMonth) {
+    dd += daysLeftToAdd;
   } else {
-    while (days_left_to_add > days_left_in_month) {
+    while (daysLeftToAdd > daysLeftInMonth) {
       if (mm == 12) {
         ++yy;
         mm = 0;
       }
       if (mm == 2 && isLeap(yy))
-        ++days_left_in_month;
+        ++daysLeftInMonth;
       ++mm;
-      days_left_to_add -= days_left_in_month;
-      days_left_in_month = this->_days_in_month[mm];
+      daysLeftToAdd -= daysLeftInMonth;
+      daysLeftInMonth = this->_daysInMonth[mm];
     }
-    dd = days_left_to_add;
+    dd = daysLeftToAdd;
   }
   std::cout << "The new date is " << dd << " " << mm << " " << yy << std::endl;
 }
@@ -97,9 +83,9 @@ bool Calendar::dateIsWrong(const int dd, const int mm, const int yy) {
     std::cerr << RESET << std::endl;
     return (true);
   }
-  if (mm != 2 && mm > 0 && mm < 13 && dd > this->_days_in_month[mm]) {
+  if (mm != 2 && mm > 0 && mm < 13 && dd > this->_daysInMonth[mm]) {
     std::cerr << RED "Error: the month " << mm << " has only ";
-    std::cerr << this->_days_in_month[mm];
+    std::cerr << this->_daysInMonth[mm];
     std::cerr << " days" RESET << std::endl;
     return (true);
   }
