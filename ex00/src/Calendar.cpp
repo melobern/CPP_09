@@ -36,7 +36,7 @@ Calendar::~Calendar() {
 
 bool Calendar::isLeap(const int year) {
   if (year == 0)
-    throw NotExistingYearException();
+    return (false);
 
   int abs_year = std::abs(year);
 
@@ -69,36 +69,14 @@ void Calendar::add_days_to_date(int mm, int dd, int yy, int daysLeftToAdd) {
 }
 
 bool Calendar::dateIsWrong(const int dd, const int mm, const int yy) {
-  if (yy == 0) {
-    std::cerr << RED "Error: year 0 doesn't exist" RESET << std::endl;
+  if (yy == 0 || mm <= 0 || mm > 12 || dd <= 0 || dd > 31)
     return (true);
-  }
-  if (mm <= 0 || mm > 12) {
-    std::cerr << RED "Error: month should be between 1 and 12";
-    std::cerr << RESET << std::endl;
+  if (mm != 2 && mm > 0 && mm < 13 && dd > this->_daysInMonth[mm])
     return (true);
-  }
-  if (dd <= 0 || dd > 31) {
-    std::cerr << RED "Error: day should be between 1 and 31";
-    std::cerr << RESET << std::endl;
+  if (mm == 2 && dd > 28 && !isLeap(yy))
     return (true);
-  }
-  if (mm != 2 && mm > 0 && mm < 13 && dd > this->_daysInMonth[mm]) {
-    std::cerr << RED "Error: the month " << mm << " has only ";
-    std::cerr << this->_daysInMonth[mm];
-    std::cerr << " days" RESET << std::endl;
+  if (mm == 2 && dd > 29)
     return (true);
-  }
-  if (mm == 2 && dd > 28 && !isLeap(yy)) {
-    std::cerr << RED "Error: the year "<< yy << " isn't leap : ";
-    std::cerr << "february can't have more than 28 days" RESET << std::endl;
-    return (true);
-  }
-  if (mm == 2 && dd > 29) {
-    std::cerr << RED "Error: february can't have more than 29 days";
-    std::cerr << RESET << std::endl;
-    return (true);
-  }
   return (false);
 }
 
@@ -113,9 +91,5 @@ void Calendar::printLeapYears(const int min, const int max) {
           std::cout << std::endl;
         }
     }
-}
-
-const char* Calendar::NotExistingYearException::what() const throw() {
-  return (RED "Error : the file can't be open." RESET);
 }
 
