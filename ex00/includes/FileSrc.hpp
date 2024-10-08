@@ -18,20 +18,16 @@
 #include <sstream>
 #include <string>
 #include <cstdlib>
-#include "../includes/Replacer.hpp"
 
 class FileSrc {
  public:
     explicit FileSrc(std::string filename);
     ~FileSrc();
-    void create_new_file(std::string s1, std::string s2);
+    void convertFileToStream(std::string s1, std::string s2);
  private:
-    std::string filename;
-    std::string file_replace;
+    std::string _datafile = "data.txt";
+    std::string _filename;
     std::ifstream file_src;
-    std::ofstream file_dest;
     bool open_in(std::string name);
-    bool open_out(std::string name);
-    void replace(std::string s1, std::string s2);
 };
 #endif  // EX04_INCLUDES_FILESRC_HPP_

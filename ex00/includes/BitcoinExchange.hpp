@@ -28,15 +28,12 @@ class BitcoinExchange {
 
    BitcoinExchange(void);
    BitcoinExchange &operator=(const BitcoinExchange &src);
+   BitcoinExchange(const BitcoinExchange &src);
+
  public:
    BitcoinExchange(const std::string inputFile);
-   BitcoinExchange(const BitcoinExchange &src);
    ~BitcoinExchange(void);
 
-   class cantOpenFileException : public std::exception {
-   public:
-      virtual const char* what() const throw();
-   };
 };
 
 #endif  //  EX01_INCLUDES_BITCOINEXCHANGE_HPP_

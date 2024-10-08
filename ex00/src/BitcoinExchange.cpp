@@ -39,7 +39,4 @@ BitcoinExchange::~BitcoinExchange() {
     return;
 }
 
-const char* BitcoinExchange::cantOpenFileException::what() const throw() {
-  return (RED "Error : the file can't be open." RESET);
-}
 
