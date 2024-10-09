@@ -6,7 +6,7 @@
 /*   By: mbernard <mbernard@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 09:07:06 by mbernard          #+#    #+#             */
-/*   Updated: 2024/10/09 20:46:56 by mbernard         ###   ########.fr       */
+/*   Updated: 2024/10/09 21:55:32 by mbernard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,9 @@
 #define EX00_INCLUDES_CALENDAR_HPP_
 
 #include <iostream>
-#include <fstream>
 #include <sstream>
-#include <cstdlib>
+#include <string>
 #include <cmath>
-#include <utility>
 #include <map>
 #include <climits>
 #include "../includes/Colors.hpp"
