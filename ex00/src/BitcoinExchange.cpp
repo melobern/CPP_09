@@ -11,81 +11,161 @@
 /* ************************************************************************** */
 
 #include "../includes/BitcoinExchange.hpp"
-#include "../includes/FileSrc.hpp"
+
 #include "../includes/Colors.hpp"
+#include "../includes/FileSrc.hpp"
 
 const std::string BitcoinExchange::_dataFile = "data.csv";
-BitcoinExchange::BitcoinExchange(void) {
-    return;
-}
+BitcoinExchange::BitcoinExchange(void) { return; }
 
 BitcoinExchange::BitcoinExchange(const std::string inputFile)
-            : _inputFile(inputFile) {
-    return;
+    : _inputFile(inputFile) {
+  return;
 }
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange &src)
-            : _inputFile(src._inputFile) {
-    *this = src;
-    return;
+    : _inputFile(src._inputFile) {
+  *this = src;
+  return;
 }
 
-BitcoinExchange& BitcoinExchange::operator=(BitcoinExchange const &src) {
-    if (this != &src) {
-        this->_inputFile = src._inputFile;
+BitcoinExchange &BitcoinExchange::operator=(BitcoinExchange const &src) {
+  if (this != &src) {
+    this->_inputFile = src._inputFile;
+  }
+  return (*this);
+}
+
+BitcoinExchange::~BitcoinExchange() { return; }
+
+void BitcoinExchange::dataLineValidation(const std::string &line, char sep) {
+  std::istringstream iss(line);
+  int year, month, day = 0;
+  float value;
+  char dash;
+  char separator;
+  char unwantedChar;
+
+  if (!(iss >> year >> dash) || dash != '-')
+    throw InvalidDataLine();
+  if (!(iss >> month >> dash >> day) || dash != '-')
+    throw InvalidDataLine();
+
+  if (!(iss >> separator) || separator != sep)
+    throw InvalidDataLine();
+
+  if (!(iss >> value))
+    throw InvalidDataLine();
+
+  if (value < 0)
+    throw notAPositiveNumber();
+  if (value > 1000)
+    throw numberHigherThan1000();
+
+  if (iss >> unwantedChar)
+    throw InvalidDataLine();
+
+  if (this->_calendar.dateIsWrong(day, month, year))
+    throw InvalidDate();
+}
+
+static bool containsLetters(std::string line) {
+  unsigned int i = 0;
+
+  while (line[i] != '\0') {
+    if (std::isalpha(line[i])) {
+      return (true);
     }
-    return (*this);
+    ++i;
+  }
+  return (false);
 }
 
-BitcoinExchange::~BitcoinExchange() {
+void BitcoinExchange::fillMap(std::stringstream *dataFile) {
+  std::string line;
+
+  while (std::getline(*dataFile, line)) {
+    std::istringstream iss(line);
+    std::string date;
+    float value;
+
+    std::getline(iss, date, ',');
+    iss >> value;
+    _datas[date] = value;
+  }
+}
+
+void BitcoinExchange::printBitcoinValue(std::string line,
+                                        std::map<std::string, float> map) {
+  std::istringstream iss(line);
+//   int year, month, day = 0;
+  float value;
+  char dash;
+  std::string date;
+
+  getline(iss, date, ' ');
+  iss >> dash >> value;
+//   std::cout << "Date : X" << date << "X Value : " << value << std::endl;
+//   std::cout << CYAN << map["2022-03-29"] << RESET << std::endl;
+
+  if (map.find(date) == map.end()) {
+    std::cout << "No data for this date : " << date << std::endl;
     return;
+  }
+  std::cout << CYAN << date << " => " << value << " = " << value * map[date] << RESET << std::endl;
 }
-
 
 void BitcoinExchange::searchBitcoinValue(void) {
-    FileSrc file;
-    std::stringstream *dataFile = NULL;
-    std::stringstream *inFile = NULL;
-    
-    try {
-        inFile = file.convertFileToStream(this->_inputFile);
-        dataFile = file.convertFileToStream(this->_dataFile);
-    } catch (std::exception &e) {
-        if (inFile != NULL)
-            delete inFile;
-        std::cerr << RED "Error: " RESET << e.what() << std::endl;
-        return;
-    }
-    std::cout << inFile->str() << std::endl;
-    std::cout << dataFile->str() << std::endl;
-    delete dataFile;
-    delete inFile;
+  FileSrc            file;
+  std::stringstream *dataFile = NULL;
+  std::stringstream *inFile = NULL;
+  std::string        line;
+  bool               isFirstLine = true;
 
-    // std::ifstream file;
-    // std::string line;
-    // std::string date_file;
-    // std::string value;
-    // std::string date_value;
-    // std::string value_value;
-    // std::string::size_type pos;
-
-    // file.open(this->_inputFile);
-    // if (!file.is_open()) {
-    //     std::cerr << RED "Error: " RESET << "Can't open file" << std::endl;
-    //     return;
-    // }
-    // while (std::getline(file, line)) {
-    //     pos = line.find(" ");
-    //     date_file = line.substr(0, pos);
-    //     if (date_file == date) {
-    //         value = line.substr(pos + 1);
-    //         pos = value.find(" ");
-    //         date_value = value.substr(0, pos);
-    //         value_value = value.substr(pos + 1);
-    //         std::cout << "Date: " << date_value << " Value: " << value_value << std::endl;
-    //         return;
-    //     }
-    // }
-    // std::cerr << RED "Error: " RESET << "Date not found" << std::endl;
+  try {
+    inFile = file.convertFileToStream(this->_inputFile);
+    dataFile = file.convertFileToStream(this->_dataFile);
+  } catch (std::exception &e) {
+    if (inFile != NULL) delete inFile;
+    std::cerr << RED "Error: " RESET << e.what() << std::endl;
     return;
+  }
+  this->fillMap(dataFile);
+  while (std::getline(*inFile, line)) {
+    if (line.empty() || line == "\n") continue;
+    if (isFirstLine && containsLetters(line)) continue;
+    isFirstLine = false;
+    try {
+      dataLineValidation(line, '|');
+      printBitcoinValue(line, this->_datas);
+    } catch (InvalidDate &e) {
+      std::string firstPart;
+      std::istringstream iss(line);
+      std::getline(iss, firstPart, '|');
+      std::cerr << RED "Error: " << e.what() << firstPart << RESET << std::endl;
+    } catch (InvalidDataLine &e) {
+      std::cerr << RED "Error: " << e.what() << line << RESET << std::endl;
+    } catch (std::exception &e) {
+        std::cerr << RED "Error: " << e.what() << RESET << std::endl;
+    }
+  }
+  delete dataFile;
+  delete inFile;
+  return;
+}
+
+const char* BitcoinExchange::InvalidDataLine::what() const throw() {
+       return ("Bad input => ");
+}
+
+const char* BitcoinExchange::InvalidDate::what() const throw() {
+       return ("Invalid date => ");
+}
+
+const char* BitcoinExchange::notAPositiveNumber::what() const throw() {
+       return ("Not a positive number.");
+}
+
+const char* BitcoinExchange::numberHigherThan1000::what() const throw() {
+        return ("too large a number.");
 }
