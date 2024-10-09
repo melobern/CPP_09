@@ -98,21 +98,19 @@ void BitcoinExchange::fillMap(std::stringstream *dataFile) {
 void BitcoinExchange::printBitcoinValue(std::string line,
                                         std::map<std::string, float> map) {
   std::istringstream iss(line);
-//   int year, month, day = 0;
   float value;
   char dash;
   std::string date;
 
   getline(iss, date, ' ');
   iss >> dash >> value;
-//   std::cout << "Date : X" << date << "X Value : " << value << std::endl;
-//   std::cout << CYAN << map["2022-03-29"] << RESET << std::endl;
 
   if (map.find(date) == map.end()) {
-    std::cout << "No data for this date : " << date << std::endl;
+    std::cout << "The closer date is " << this->_calendar.findClosestDate(date, map) << std::endl;
     return;
   }
-  std::cout << CYAN << date << " => " << value << " = " << value * map[date] << RESET << std::endl;
+  std::cout << CYAN << date << " => " << value << " = ";
+  std::cout << value * map[date] << RESET << std::endl;
 }
 
 void BitcoinExchange::searchBitcoinValue(void) {

@@ -17,6 +17,8 @@
 #include <cstdlib>
 #include <cmath>
 #include <utility>
+#include <map>
+#include <climits>
 #include "../includes/Colors.hpp"
 
 class Calendar {
@@ -33,6 +35,8 @@ class Calendar {
   ~Calendar(void);
 
   void add_days_to_date(int mm, int dd, int yy, int days_left_to_add);
+  std::string findClosestDate(const std::string date,
+                              const std::map<std::string, float> map);
   bool dateIsWrong(const int dd, const int mm, const int yy);
   void printLeapYears(const int min, const int max);
 };

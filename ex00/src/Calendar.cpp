@@ -68,6 +68,25 @@ void Calendar::add_days_to_date(int mm, int dd, int yy, int daysLeftToAdd) {
   std::cout << "The new date is " << dd << " " << mm << " " << yy << std::endl;
 }
 
+std::string Calendar::findClosestDate(const std::string date,
+                                      const std::map<std::string, float> map) {
+  std::string closestDate;
+  int closestDateDiff = INT_MAX;
+  int dateDiff;
+
+  for (std::map<std::string, float>::const_iterator it = map.begin();
+       it != map.end(); ++it) {
+    dateDiff = std::atoi(date) - std::atoi(it->first);
+    if (dateDiff < closestDateDiff && dateDiff > 0) {
+      closestDateDiff = dateDiff;
+      closestDate = it->first;
+    }
+    if (dateDiff < 0)
+      break;
+  }
+  return (closestDate);
+}
+
 bool Calendar::dateIsWrong(const int dd, const int mm, const int yy) {
   if (yy == 0 || mm <= 0 || mm > 12 || dd <= 0 || dd > 31)
     return (true);
