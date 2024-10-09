@@ -11,11 +11,8 @@
 /* ************************************************************************** */
 
 #include "../includes/FileSrc.hpp"
-#include "../includes/BitcoinExchange.hpp"
 
-
-FileSrc::FileSrc(std::string filename) {
-    this->_filename = filename;
+FileSrc::FileSrc(void) {
     return;
 }
 
@@ -25,25 +22,22 @@ FileSrc::~FileSrc() {
 
 bool FileSrc::open_in(const std::string name) {
         this->file_src.open(name.c_str(), std::ios::in);
-        if (!this->file_src.is_open()) {
-            std::cout << "Error: "<< std::endl;
-            std::perror(name.c_str());
+        if (!this->file_src.is_open())
             return (0);
-        }
         return (1);
 }
 
-void FileSrc::convertFileToStream(const std::string s1, const std::string s2) {
-    std::stringstream datafile;
-    std::stringstream filename;
-    BitcoinExchange   btc;
+std::stringstream* FileSrc::convertFileToStream(const std::string filename) {
+    if (!this->open_in(filename))
+        throw std::runtime_error(std::strerror(errno));
 
-    if (!this->open_in(this->_datafile))
-        throw std::runtime_error("Error: file not found");
-    datafile << this->file_src.rdbuf();
+    std::stringstream *stream = new std::stringstream();
+
+    *stream << this->file_src.rdbuf();
     this->file_src.close();
-    if (content.str().empty())
-      throw std::runtime_error("File is empty");
-    else
-        std::cerr << RED "This file is empty" RESET << std::endl;
+    if (stream->str().empty()) {
+        delete stream;
+        throw std::runtime_error("File is empty");
+    }
+    return (stream);
 }

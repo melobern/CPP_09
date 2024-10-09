@@ -58,6 +58,8 @@ int main(int ac, char **av) {
       return (1);
   }
   BitcoinExchange file(s1);
+  file.searchBitcoinValue();
+
   return (0);
 }
 

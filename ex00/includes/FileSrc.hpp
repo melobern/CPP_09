@@ -17,17 +17,17 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <cstring>
+#include <stdexcept>
 #include <cstdlib>
 
 class FileSrc {
  public:
-    explicit FileSrc(std::string filename);
-    ~FileSrc();
-    void convertFileToStream(std::string s1, std::string s2);
+   FileSrc(void);
+   ~FileSrc();
+   std::stringstream*           convertFileToStream(const std::string filename);
  private:
-    std::string _datafile = "data.txt";
-    std::string _filename;
-    std::ifstream file_src;
-    bool open_in(std::string name);
+   std::ifstream file_src;
+   bool open_in(const std::string name);
 };
 #endif  // EX04_INCLUDES_FILESRC_HPP_

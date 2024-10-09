@@ -17,8 +17,8 @@ MKDIR = mkdir -p
 RMDIR = rm -rf
 
 # ---------------------------------- Sources --------------------------------- #
-HEADER = Colors Calendar BitcoinExchange
-SRCS = main Calendar BitcoinExchange
+HEADER = Colors Calendar BitcoinExchange FileSrc
+SRCS = main Calendar BitcoinExchange FileSrc
 
 # ---------------------------------- Repertories ----------------------------- #
 HEADERS_DIR = includes/

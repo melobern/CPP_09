@@ -23,6 +23,7 @@
 class BitcoinExchange {
  private:
    std::map<std::string, float> _datas;
+   static const std::string     _dataFile;
    std::string                  _inputFile;
    Calendar                     _calendar;
 
@@ -33,6 +34,7 @@ class BitcoinExchange {
  public:
    BitcoinExchange(const std::string inputFile);
    ~BitcoinExchange(void);
+   void searchBitcoinValue(void);
 
 };
 
