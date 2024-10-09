@@ -34,6 +34,7 @@ class BitcoinExchange {
  public:
    BitcoinExchange(const std::string inputFile);
    ~BitcoinExchange(void);
+   bool isValidDataLine(const std::string &line);
    void searchBitcoinValue(void);
 
 };
