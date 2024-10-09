@@ -6,7 +6,7 @@
 /*   By: mbernard <mbernard@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 09:29:57 by mbernard          #+#    #+#             */
-/*   Updated: 2024/10/09 22:05:42 by mbernard         ###   ########.fr       */
+/*   Updated: 2024/10/09 22:06:47 by mbernard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 
 
 int main(int ac, char **av) {
-
   if (ac != 2) {
       std::cerr << RED "Error: wrong number of arguments" RESET << std::endl;
       std::cerr << "Usage : ./btc [filename]" << std::endl;
