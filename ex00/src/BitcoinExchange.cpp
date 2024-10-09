@@ -6,7 +6,7 @@
 /*   By: mbernard <mbernard@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 16:19:44 by mbernard          #+#    #+#             */
-/*   Updated: 2024/10/07 19:05:23 by mbernard         ###   ########.fr       */
+/*   Updated: 2024/10/09 21:34:44 by mbernard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,12 +105,43 @@ void BitcoinExchange::printBitcoinValue(std::string line,
   getline(iss, date, ' ');
   iss >> dash >> value;
 
-  if (map.find(date) == map.end()) {
-    std::cout << "The closer date is " << this->_calendar.findClosestDate(date, map) << std::endl;
+  if (this->_calendar.dateToInt(date) <
+      this->_calendar.dateToInt(map.begin()->first)) {
+    std::cerr << RED << "Error : date inferior to every database's dates : ";
+    std::cerr << date << RESET << std::endl;
     return;
   }
-  std::cout << CYAN << date << " => " << value << " = ";
-  std::cout << value * map[date] << RESET << std::endl;
+  if (map.find(date) == map.end()) {
+    std::string newDate = this->_calendar.findClosestDate(date, map);
+    std::cout << date << " => " << value << " = ";
+    std::cout << value * map[newDate] << std::endl;
+    return;
+  }
+  std::cout << date << " => " << value << " = ";
+  std::cout << value * map[date] << std::endl;
+}
+
+void BitcoinExchange::processLine(const std::string line, bool *isFirstLine) {
+    if (line.empty() || line == "\n")
+      return;
+    if (isFirstLine) {
+      *isFirstLine = false;
+      if (containsLetters(line))
+        return;
+    }
+    try {
+      dataLineValidation(line, '|');
+      printBitcoinValue(line, this->_datas);
+    } catch (InvalidDate &e) {
+      std::string firstPart;
+      std::istringstream iss(line);
+      std::getline(iss, firstPart, '|');
+      std::cerr << RED "Error: " << e.what() << firstPart << RESET << std::endl;
+    } catch (InvalidDataLine &e) {
+      std::cerr << RED "Error: " << e.what() << line << RESET << std::endl;
+    } catch (std::exception &e) {
+      std::cerr << RED "Error: " << e.what() << RESET << std::endl;
+    }
 }
 
 void BitcoinExchange::searchBitcoinValue(void) {
@@ -125,27 +156,12 @@ void BitcoinExchange::searchBitcoinValue(void) {
     dataFile = file.convertFileToStream(this->_dataFile);
   } catch (std::exception &e) {
     if (inFile != NULL) delete inFile;
-    std::cerr << RED "Error: " RESET << e.what() << std::endl;
+    std::cerr << RED "Error: " << e.what() << RESET << std::endl;
     return;
   }
   this->fillMap(dataFile);
   while (std::getline(*inFile, line)) {
-    if (line.empty() || line == "\n") continue;
-    if (isFirstLine && containsLetters(line)) continue;
-    isFirstLine = false;
-    try {
-      dataLineValidation(line, '|');
-      printBitcoinValue(line, this->_datas);
-    } catch (InvalidDate &e) {
-      std::string firstPart;
-      std::istringstream iss(line);
-      std::getline(iss, firstPart, '|');
-      std::cerr << RED "Error: " << e.what() << firstPart << RESET << std::endl;
-    } catch (InvalidDataLine &e) {
-      std::cerr << RED "Error: " << e.what() << line << RESET << std::endl;
-    } catch (std::exception &e) {
-        std::cerr << RED "Error: " << e.what() << RESET << std::endl;
-    }
+    this->processLine(line, &isFirstLine);
   }
   delete dataFile;
   delete inFile;

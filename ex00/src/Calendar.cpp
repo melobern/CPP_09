@@ -6,7 +6,7 @@
 /*   By: mbernard <mbernard@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 09:07:06 by mbernard          #+#    #+#             */
-/*   Updated: 2024/10/08 08:19:13 by mbernard         ###   ########.fr       */
+/*   Updated: 2024/10/09 20:53:23 by mbernard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,21 +68,33 @@ void Calendar::add_days_to_date(int mm, int dd, int yy, int daysLeftToAdd) {
   std::cout << "The new date is " << dd << " " << mm << " " << yy << std::endl;
 }
 
+int         Calendar::dateToInt(const std::string date) {
+  char dash;
+  std::istringstream iss(date);
+  int year, month, day;
+  int result;
+
+  iss >> year >> dash >> month >> dash >> day;
+  result = (year * 10000) + (month * 100) + day;
+  return (result);
+}
+
 std::string Calendar::findClosestDate(const std::string date,
                                       const std::map<std::string, float> map) {
   std::string closestDate;
   int closestDateDiff = INT_MAX;
+  int dateToInt = this->dateToInt(date);
   int dateDiff;
 
   for (std::map<std::string, float>::const_iterator it = map.begin();
        it != map.end(); ++it) {
-    dateDiff = std::atoi(date) - std::atoi(it->first);
+    dateDiff = dateToInt - this->dateToInt(it->first);
     if (dateDiff < closestDateDiff && dateDiff > 0) {
       closestDateDiff = dateDiff;
       closestDate = it->first;
     }
     if (dateDiff < 0)
-      break;
+        break;
   }
   return (closestDate);
 }
