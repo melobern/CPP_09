@@ -88,7 +88,8 @@ void BitcoinExchange::fillMap(std::stringstream *dataFile) {
     std::istringstream iss(line);
     std::string date;
     float value;
-
+    if (line.empty() || line == "\n" || containsLetters(line))
+      continue;
     std::getline(iss, date, ',');
     iss >> value;
     _datas[date] = value;
