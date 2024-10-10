@@ -16,6 +16,7 @@
 #include "../includes/FileSrc.hpp"
 
 const std::string BitcoinExchange::_dataFile = "data.csv";
+
 BitcoinExchange::BitcoinExchange(void) { return; }
 
 BitcoinExchange::BitcoinExchange(const std::string inputFile)
@@ -50,21 +51,16 @@ void BitcoinExchange::dataLineValidation(const std::string &line, char sep) {
     throw InvalidDataLine();
   if (!(iss >> month >> dash >> day) || dash != '-')
     throw InvalidDataLine();
-
   if (!(iss >> separator) || separator != sep)
     throw InvalidDataLine();
-
   if (!(iss >> value))
     throw InvalidDataLine();
-
   if (value < 0)
     throw notAPositiveNumber();
   if (value > 1000)
     throw numberHigherThan1000();
-
   if (iss >> unwantedChar)
     throw InvalidDataLine();
-
   if (this->_calendar.dateIsWrong(day, month, year))
     throw InvalidDate();
 }
@@ -156,7 +152,8 @@ void BitcoinExchange::searchBitcoinValue(void) {
     inFile = file.convertFileToStream(this->_inputFile);
     dataFile = file.convertFileToStream(this->_dataFile);
   } catch (std::exception &e) {
-    if (inFile != NULL) delete inFile;
+    if (inFile != NULL)
+      delete inFile;
     std::cerr << RED "Error: " << e.what() << RESET << std::endl;
     return;
   }

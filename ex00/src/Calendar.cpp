@@ -46,28 +46,6 @@ bool Calendar::isLeap(const int year) {
   return (false);
 }
 
-void Calendar::add_days_to_date(int mm, int dd, int yy, int daysLeftToAdd) {
-  int daysLeftInMonth = this->_daysInMonth[mm]-dd;
-
-  if (daysLeftToAdd < daysLeftInMonth) {
-    dd += daysLeftToAdd;
-  } else {
-    while (daysLeftToAdd > daysLeftInMonth) {
-      if (mm == 12) {
-        ++yy;
-        mm = 0;
-      }
-      if (mm == 2 && isLeap(yy))
-        ++daysLeftInMonth;
-      ++mm;
-      daysLeftToAdd -= daysLeftInMonth;
-      daysLeftInMonth = this->_daysInMonth[mm];
-    }
-    dd = daysLeftToAdd;
-  }
-  std::cout << "The new date is " << dd << " " << mm << " " << yy << std::endl;
-}
-
 int         Calendar::dateToInt(const std::string date) {
   char dash;
   std::istringstream iss(date);
@@ -109,18 +87,5 @@ bool Calendar::dateIsWrong(const int dd, const int mm, const int yy) {
   if (mm == 2 && dd > 29)
     return (true);
   return (false);
-}
-
-void Calendar::printLeapYears(const int min, const int max) {
-    int yearFounds = 0;
-
-    for (int x = min; x < max; x++) {
-      if (isLeap(x)) {
-        yearFounds++;
-        std::cout << x << "\t";
-        if (yearFounds % 11 == 0)
-          std::cout << std::endl;
-        }
-    }
 }
 

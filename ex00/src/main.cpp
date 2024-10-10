@@ -25,7 +25,7 @@ int main(int ac, char **av) {
   const std::string s1 = av[1];
 
   if (s1.empty()) {
-      std::cerr << RED "Error: s1 or s2 is empty" RESET << std::endl;
+      std::cerr << RED "Error: s1 is empty" RESET << std::endl;
       return (1);
   }
   BitcoinExchange file(s1);
@@ -33,28 +33,3 @@ int main(int ac, char **av) {
 
   return (0);
 }
-
-// #include <cstdlib>
-// #include <utility>
-// static void calendarTests(int ac, char **av) {
-//   Calendar calendar;
-//
-//   if (ac == 3) {
-//     int minYY = std::atoi(av[1]);
-//     int maxYY = std::atoi(av[2]);
-//     if (minYY > maxYY)
-//       std::swap(maxYY, minYY);
-//     calendar.printLeapYears(minYY, maxYY);
-//     return;
-//   }
-//
-//   if (ac == 5) {
-//     int day = std::atoi(av[1]);
-//     int month = std::atoi(av[2]);
-//     int year = std::atoi(av[3]);
-//     int add = std::atoi(av[4]);
-//     if (calendar.dateIsWrong(day, month, year))
-//       return;
-//     calendar.add_days_to_date(month, day, year, add);
-//   }
-// }
