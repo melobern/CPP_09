@@ -11,87 +11,97 @@
 /* ************************************************************************** */
 
 #include "../includes/RPN.hpp"
-#include "../includes/Colors.hpp"
 
-RPN::RPN(void) {
-  return;
-}
+RPN::RPN(void) { return; }
 
-RPN::RPN(const std::string inputMath) : _inputMath(inputMath) {
-  return;
-}
+RPN::RPN(const std::string inputMath) : _line(inputMath) { return; }
 
-RPN::RPN(const RPN& src) : _inputMath(src._inputMath) {
+RPN::RPN(const RPN& src) : _line(src._line) {
   *this = src;
   return;
 }
 
 RPN& RPN::operator=(RPN const& src) {
   if (this != &src) {
-    this->_inputMath = src._inputMath;
+    this->_line = src._line;
   }
   return (*this);
 }
 
-RPN::~RPN() {
-  return;
+RPN::~RPN() { return; }
+
+bool RPN::isOperator(const std::string token) {
+  return (token == "+" || token == "-" || token == "*" || token == "/");
 }
 
-static bool containsLetters(std::string line) {
-  unsigned int i = 0;
+bool RPN::isValidNumber(const std::string token) {
+  size_t len = 0;
+  size_t size = token.size();
 
-  while (line[i] != '\0') {
-    if (std::isalpha(line[i])) {
-      return (true);
-    }
-    ++i;
+  if (token[0] == '-')
+    len++;
+  while (len < size) {
+    if (!isdigit(token[len]))
+      return (false);
+    len++;
   }
-  return (false);
+  if (!isdigit(token[len - 1]))
+    return (false);
+
+  long value = strtol(token.c_str(), NULL, 10);
+  if (value > 9 || value < -9) {
+    return (false);
+  }
+  return (true);
 }
 
-void RPN::fillStack(std::stringstream* dataFile) {
-  std::string line;
-
-  while (std::getline(*dataFile, line)) {
-    std::istringstream iss(line);
-    std::string date;
-    float value;
-    if (line.empty() || line == "\n" || containsLetters(line))
-      continue;
-    std::getline(iss, date, ',');
-    iss >> value;
-    _datas[date] = value;
+long RPN::applyOperator(const std::string& op, long a, long b) {
+  switch (op[0]) {
+    case '+':
+      return (a + b);
+    case '-':
+      return (a - b);
+    case '*':
+      return (a * b);
+    case '/':
+      if (b == 0) {
+        throw DivisionByZeroException();
+      }
+      return (a / b);
+    default:
+      throw invalidValueException();
   }
 }
 
-void RPN::verifyToken(const std::string line) {
-    std::string token;
-    std::istringstream iss(line);
+void RPN::calculate(void) {
+  std::string token;
+  std::istringstream iss(_line);
 
-    while (iss >> token) {
-        if (isOperator(token)) {
-          try {
-
-          } catch (const std::exception& e) {
-            std::cerr << RED << e.what() << RESET << std::endl;
-            return;
-          }
-        } else if isValidNumber(token) {
-            _datas.push(strtol(token.c_str())); // why ???
-        } else {
-          throw invalidValueException();
-        }
+  while (iss >> token) {
+    if (isOperator(token)) {
+      if (_datas.size() < 2) {
+        throw TooFewOperandsException();
+      }
+      long a = _datas.top();
+      _datas.pop();
+      long b = _datas.top();
+      _datas.pop();
+      long result = applyOperator(token, b, a);
+      _datas.push(result);
+    } else if (isValidNumber(token)) {
+      _datas.push(strtol(token.c_str(), NULL, 10));
+    } else {
+      throw invalidValueException();
     }
+  }
+  if (_datas.size() != 1) {
+    throw TooManyOperandsException();
+  }
+  std::cout << _datas.top() << std::endl;
 }
-
-void RPN::calculate(void) {}
 
 const char* RPN::invalidValueException::what() const throw() {
   return ("Invalid value.");
-}
-
-const char* RPN::EmptyInputException::what() const throw() {
-  return ("Empty input.");
 }
 
 const char* RPN::TooManyOperandsException::what() const throw() {

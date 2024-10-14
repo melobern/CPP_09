@@ -23,11 +23,16 @@ int main(int ac, char **av) {
   const std::string s1 = av[1];
 
   if (s1.empty()) {
-      std::cerr << RED "Error: s1 is empty" RESET << std::endl;
+      std::cerr << RED "Error: arg[1] is empty" RESET << std::endl;
       return (1);
   }
-  RPN calcul(s1);
-  calcul.calculate();
 
+  RPN rpn(s1);
+  try {
+    rpn.calculate();
+  } catch (std::exception& e) {
+    std::cerr << RED "Error: " << e.what() << RESET << std::endl;
+    return (1);
+  }
   return (0);
 }
