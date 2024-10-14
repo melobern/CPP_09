@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EX01_INCLUDES_BITCOINEXCHANGE_HPP_
-#define EX01_INCLUDES_BITCOINEXCHANGE_HPP_
+#ifndef EX01_INCLUDES_RPN_HPP_
+#define EX01_INCLUDES_RPN_HPP_
 #include <iostream>
 #include <sstream>
 #include <stack>
@@ -22,20 +22,14 @@
 class RPN {
  private:
   std::stack<long> _datas;
-  std::string _inputMath;
+  std::string      _line;
 
   RPN(void);
   RPN& operator=(const RPN& src);
   RPN(const RPN& src);
-  void fillStack(std::stringstream* dataFile);
   bool isOperator(const std::string token);
   bool isValidNumber(const std::string token);
-  void verifyToken(const std::string line);
-
-  class EmptyInputException : public std::exception {
-   public:
-    virtual const char* what() const throw();
-  };
+  long applyOperator(const std::string& op, long a, long b);
 
   class invalidValueException : public std::exception {
    public:
@@ -63,4 +57,4 @@ class RPN {
   void calculate(void);
 };
 
-#endif  //  EX01_INCLUDES_BITCOINEXCHANGE_HPP_
+#endif  //  EX01_INCLUDES_RPN_HPP_
