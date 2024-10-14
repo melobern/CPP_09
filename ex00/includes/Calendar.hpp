@@ -28,6 +28,7 @@ class Calendar {
   Calendar(const Calendar &src);
 
   bool        isLeap(const int year);
+  int         getCurrentYear(void);
 
  public:
   Calendar(void);
