@@ -35,15 +35,24 @@ Calendar::~Calendar() {
 }
 
 bool Calendar::isLeap(const int year) {
-  if (year == 0)
+  if (year == 0 || year < -44)
     return (false);
 
   int abs_year = std::abs(year);
 
-  if (((abs_year % 4 == 0) && (abs_year % 100 != 0)) || (abs_year % 400 == 0)) {
-    return (true);
+  if (abs_year % 4 == 0) {
+    if (year < 1582 || abs_year % 100 != 0 || abs_year % 400 == 0)
+      return (true);
   }
+
   return (false);
+}
+
+int        Calendar::getCurrentYear(void) {
+    time_t now = time(0);
+    struct tm *ltm = localtime(&now);
+    int currentYear = 1900 + ltm->tm_year;
+    return currentYear;
 }
 
 int         Calendar::dateToInt(const std::string date) {
@@ -51,8 +60,11 @@ int         Calendar::dateToInt(const std::string date) {
   std::istringstream iss(date);
   int year, month, day;
   int result;
+  int currentYear = getCurrentYear();
 
   iss >> year >> dash >> month >> dash >> day;
+  if (year * 10000 <  year)
+     year = currentYear + 1;
   result = (year * 10000) + (month * 100) + day;
   return (result);
 }
