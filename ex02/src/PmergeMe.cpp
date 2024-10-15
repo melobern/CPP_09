@@ -38,7 +38,7 @@ bool PmergeMe::isValidNumber(const std::string token) {
   size_t len = 0;
   size_t size = token.size();
 
-  if (token[0] == '-')
+  if (token[0] == '-' && size > 1)
     len++;
   while (len < size) {
     if (!isdigit(token[len]))
