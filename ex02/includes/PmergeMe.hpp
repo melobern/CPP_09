@@ -13,6 +13,7 @@
 #ifndef EX02_INCLUDES_PMERGEME_HPP_
 #define EX02_INCLUDES_PMERGEME_HPP_
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <exception>
 #include <string>
@@ -20,10 +21,14 @@
 #include <climits>
 #include <vector>
 #include <algorithm>
+#include <ctime>
+#include <sys/time.h>
 
 class PmergeMe {
  private:
   std::vector<int> _arr;
+  std::vector<int> _sorted;
+
   char      **_av;
 
   PmergeMe(void);
