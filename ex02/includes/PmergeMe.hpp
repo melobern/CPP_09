@@ -17,43 +17,31 @@
 #include <exception>
 #include <string>
 #include <cstdlib>
+#include <climits>
+#include <vector>
+#include <algorithm>
 
 class PmergeMe {
  private:
-  std::stack<long> _datas;
-  std::string      _line;
+  std::vector<int> _arr;
+  char      **_av;
 
   PmergeMe(void);
   PmergeMe& operator=(const PmergeMe& src);
   PmergeMe(const PmergeMe& src);
-  bool isOperator(const std::string token);
   bool isValidNumber(const std::string token);
-  long applyOperator(const std::string& op, long a, long b);
 
   class invalidValueException : public std::exception {
    public:
     virtual const char* what() const throw();
   };
 
-  class TooManyOperandsException : public std::exception {
-   public:
-    virtual const char* what() const throw();
-  };
-
-  class TooFewOperandsException : public std::exception {
-   public:
-    virtual const char* what() const throw();
-  };
-
-  class DivisionByZeroException : public std::exception {
-   public:
-    virtual const char* what() const throw();
-  };
-
  public:
-  explicit PmergeMe(const std::string inputMath);
+  explicit PmergeMe(char **av);
   ~PmergeMe(void);
-  void calculate(void);
+  void fillArray(void);
+  void fordJohnsonSort(void);
+  void printArray(void);
 };
 
 #endif  //  EX02_INCLUDES_PMERGEME_HPP_
