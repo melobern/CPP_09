@@ -14,104 +14,97 @@
 
 PmergeMe::PmergeMe(void) { return; }
 
-PmergeMe::PmergeMe(const std::string inputMath) : _line(inputMath) { return; }
+PmergeMe::PmergeMe(char **av) : _av(av) { return; }
 
-PmergeMe::PmergeMe(const PmergeMe& src) : _line(src._line) {
+PmergeMe::PmergeMe(const PmergeMe& src) : _av(src._av) {
   *this = src;
   return;
 }
 
 PmergeMe& PmergeMe::operator=(PmergeMe const& src) {
   if (this != &src) {
-    this->_line = src._line;
+    this->_av = src._av;
   }
   return (*this);
 }
 
 PmergeMe::~PmergeMe() { return; }
 
-bool PmergeMe::isOperator(const std::string token) {
-  return (token == "+" || token == "-" || token == "*" || token == "/");
-}
+bool PmergeMe::isValidNumber(const std::string arg) {
+  size_t size = arg.size();
 
-bool PmergeMe::isValidNumber(const std::string token) {
-  size_t len = 0;
-  size_t size = token.size();
-
-  if (token[0] == '-' && size > 1)
-    len++;
-  while (len < size) {
-    if (!isdigit(token[len]))
-      return (false);
-    len++;
-  }
-  if (!isdigit(token[len - 1]))
+  if (arg.empty() || arg[0] == '-')
     return (false);
-
-  long value = strtol(token.c_str(), NULL, 10);
-  if (value > 9 || value < -9) {
+  for (size_t len = 0; len < size; len++) {
+    if (!isdigit(arg[len]))
+      return (false);
+  }
+  if (std::atoll(arg.c_str()) > INT_MAX) {
     return (false);
   }
   return (true);
 }
 
-long PmergeMe::applyOperator(const std::string& op, long a, long b) {
-  switch (op[0]) {
-    case '+':
-      return (a + b);
-    case '-':
-      return (a - b);
-    case '*':
-      return (a * b);
-    case '/':
-      if (b == 0) {
-        throw DivisionByZeroException();
-      }
-      return (a / b);
-    default:
-      throw invalidValueException();
-  }
-}
-
-void PmergeMe::calculate(void) {
-  std::string token;
-  std::istringstream iss(_line);
-
-  while (iss >> token) {
-    if (isOperator(token)) {
-      if (_datas.size() < 2) {
-        throw TooFewOperandsException();
-      }
-      long a = _datas.top();
-      _datas.pop();
-      long b = _datas.top();
-      _datas.pop();
-      long result = applyOperator(token, b, a);
-      _datas.push(result);
-    } else if (isValidNumber(token)) {
-      _datas.push(strtol(token.c_str(), NULL, 10));
+void PmergeMe::fillArray(void) {
+  for (size_t i = 0; _av[i]; ++i) {
+    std::string arg(_av[i]);
+    if (isValidNumber(arg)) {
+      _arr.push_back(atoi(arg.c_str()));
     } else {
       throw invalidValueException();
     }
   }
-  if (_datas.size() != 1) {
-    throw TooManyOperandsException();
+}
+
+void PmergeMe::fordJohnsonSort(void) {
+  // Étape 1 : Faire des paires
+  std::vector<std::pair<int, int> > pairs;
+  for (size_t i = 0; i + 1 < _arr.size(); i += 2) {
+    if (_arr[i] < _arr[i + 1]) {
+      pairs.push_back(std::make_pair(_arr[i], _arr[i + 1]));
+    } else {
+      pairs.push_back(std::make_pair(_arr[i + 1], _arr[i]));
+    }
   }
-  std::cout << _datas.top() << std::endl;
+  if (_arr.size() % 2 != 0) {
+    pairs.push_back(std::make_pair(_arr.back(), _arr.back()));
+  }
+  // Étape 2 : Trier les paires par leur plus grand nombre
+  std::sort(pairs.begin(), pairs.end(),
+            [](const std::pair<int, int>& a, const std::pair<int, int>& b) {
+              return a.second < b.second;
+            });
+  // Étape 3 : Séparer les petits et les grands éléments
+  std::vector<int> smalls, larges;
+  for (size_t i = 0; i < pairs.size(); ++i) {
+    smalls.push_back(pairs[i].first);
+    larges.push_back(pairs[i].second);
+  }
+  // Étape 4 : Insérer le plus petit élément dans le tableau des grands
+  std::vector<int> _sorted;
+
+  _sorted.push_back(larges[0]);
+  for (size_t i = 1; i < larges.size(); ++i) {
+    _sorted.insert(std::upper_bound(_sorted.begin(), _sorted.end(), larges[i]),
+                  larges[i]);
+  }
+  // Étape 5 : Insérer les autres petits éléments avec une recherche
+  // dichotomique
+  for (size_t i = 0; i < smalls.size(); ++i) {
+    _sorted.insert(std::upper_bound(_sorted.begin(), _sorted.end(), smalls[i]),
+                  smalls[i]);
+  }
+  // Copier le résultat trié dans le tableau original
+  _arr = _sorted;
 }
 
 const char* PmergeMe::invalidValueException::what() const throw() {
   return ("Invalid value.");
 }
 
-const char* PmergeMe::TooManyOperandsException::what() const throw() {
-  return ("Too many operands.");
-}
-
-const char* PmergeMe::TooFewOperandsException::what() const throw() {
-  return ("Too few operands.");
-}
-
-const char* PmergeMe::DivisionByZeroException::what() const throw() {
-  return ("Division by zero.");
+void PmergeMe::printArray(void) {
+  for (size_t i = 0; i < _arr.size(); ++i) {
+    std::cout << _arr[i] << " ";
+  }
+  std::cout << std::endl;
 }
