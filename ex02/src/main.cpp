@@ -27,21 +27,64 @@
 // 15 2 4 | 8 33 99
 // 2 4 | 15 8 33 99
 
-int main(int ac, char **av) {
-    if (ac < 2) {
-      std::cerr << RED "Error: wrong number of arguments" RESET << std::endl;
-      std::cerr << "Usage : ./PmergeMe [Num] [Num]..." << std::endl;
-      return (1);
+static bool isValidNumber(const std::string arg) {
+  size_t size = arg.size();
+
+  if (arg.empty() || arg[0] == '-') {
+    std::cerr << RED "Error: invalid argument :" << std::endl;
+    if (arg.empty())
+      std::cerr << "Empty string !" RESET << std::endl;
+    else
+      std::cerr << arg << " is not a positive int number !" RESET << std::endl;
+    return (false);
+  }
+  for (size_t len = 0; len < size; len++) {
+    if (!isdigit(arg[len])) {
+      std::cerr << RED "Error: invalid argument :" << std::endl;
+      std::cerr << arg << " is not composed of digits only !";
+      std::cerr << RESET << std::endl;
+      return (false);
     }
+  }
+  if (std::atoll(arg.c_str()) > INT_MAX) {
+    std::cerr << RED "Error: invalid argument :" << std::endl;
+    std::cerr << arg << " is bigger than INT_MAX !" RESET << std::endl;
+    std::cerr << "Reminder : INT_MAX == " << INT_MAX << std::endl;
+    return (false);
+  }
+  return (true);
+}
+
+static bool checkArgs(int ac, char **av) {
+  if (ac < 2) {
+      std::cerr << RED "Error: wrong number of arguments" RESET << std::endl;
+      std::cerr << "Usage : ./PmergeMe < int numbers >..." << std::endl;
+      return (false);
+  }
+  for (int i = 1; i < ac; i++) {
+    if (!isValidNumber(av[i]))
+      return (false);
+  }
+  return (true);
+}
+
+int main(int ac, char **av) {
+    if (!checkArgs(ac, av))
+      return (1);
 
     PmergeMe pm(av + 1);
     try {
+        clock_t start = clock();
         pm.fillArray();
         std::cout << "Before:\t";
         pm.printArray();
         pm.fordJohnsonSort();
         std::cout << "After:\t";
         pm.printArray();
+        clock_t end = clock();
+        double elapsed_time = static_cast<double>(end - start) / CLOCKS_PER_SEC / 1000 * 1e6;
+        std::cout << std::fixed << std::setprecision(5);
+        std::cout << "Time to process a range of " << ac - 1 << " numbers: " << elapsed_time << " us" << std::endl;
     } catch (std::exception& e) {
         std::cerr << RED "Error: " << e.what() << RESET << std::endl;
     }
