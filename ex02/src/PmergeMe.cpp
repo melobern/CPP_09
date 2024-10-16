@@ -54,7 +54,7 @@ void PmergeMe::fillArray(void) {
 }
 
 bool comparePairs(const std::pair<int, int>& a, const std::pair<int, int>& b) {
-    return a.second < b.second;
+    return (a.second < b.second);
 }
 
 void PmergeMe::fordJohnsonSort(void) {
@@ -68,7 +68,9 @@ void PmergeMe::fordJohnsonSort(void) {
       pairs.push_back(std::make_pair(_arr[i + 1], _arr[i]));
     }
   }
-
+  for (size_t i = 0; i < pairs.size(); ++i) {
+    std::cout << pairs[i].first << " " << pairs[i].second << std::endl;
+  }
   if (_arr.size() % 2 != 0) {
     pairs.push_back(std::make_pair(_arr.back(), _arr.back()));
   }
