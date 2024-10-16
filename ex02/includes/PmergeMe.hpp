@@ -21,32 +21,37 @@
 #include <climits>
 #include <vector>
 #include <algorithm>
+#include <utility>
 #include <ctime>
 #include <sys/time.h>
 
 class PmergeMe {
  private:
   std::vector<int> _arr;
-  std::vector<int> _sorted;
+  std::vector<int> _smalls;
+  std::vector<int> _larges;
+
+  // std::list<int> _list;
+  // std::list<int> _smallsList;
+  // std::list<int> _largesList;
 
   char      **_av;
 
   PmergeMe(void);
   PmergeMe& operator=(const PmergeMe& src);
   PmergeMe(const PmergeMe& src);
-  bool isValidNumber(const std::string token);
 
-  class invalidValueException : public std::exception {
-   public:
-    virtual const char* what() const throw();
-  };
-
+  void insertLastNumbers(int oddOneOut);
+  void buildPairs(std::vector<std::pair<int, int> >& pairs);
+  void putInSmallAndLarge(std::vector<std::pair<int, int> > &pairs);
+  void printPairs(std::vector<std::pair<int, int> > pairs);bool isSorted(std::vector<int> arr);
  public:
   explicit PmergeMe(char **av);
   ~PmergeMe(void);
   void fillArray(void);
-  void fordJohnsonSort(void);
-  void printArray(void);
+  void fordJohnsonSortVector(void);
+  void printArray(const std::string str);
+  void checkIfSorted(void);
 };
 
 #endif  //  EX02_INCLUDES_PMERGEME_HPP_

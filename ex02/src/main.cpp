@@ -22,11 +22,6 @@
 //     Tu ajoutes les petits dans la tableau des grands avec un binary search (recherche dichotomique)
 //     Pour optimiser la dernière étape tu utilises la suite de Jacobsthal (https://fr.wikipedia.org/wiki/Suite_de_Jacobsthal)
 
-// 33 15 2 8 99 4
-// 15 33 2 8 4 99
-// 15 2 4 | 8 33 99
-// 2 4 | 15 8 33 99
-
 static bool isValidNumber(const std::string arg) {
   size_t size = arg.size();
 
@@ -56,8 +51,10 @@ static bool isValidNumber(const std::string arg) {
 }
 
 static bool checkArgs(int ac, char **av) {
-  if (ac < 2) {
-      std::cerr << RED "Error: wrong number of arguments" RESET << std::endl;
+  if (ac < 3) {
+      std::cerr << RED << "Error: wrong number of arguments : ";
+      std::cerr << "you must give, at least, two arguments.";
+      std::cerr << RESET << std::endl;
       std::cerr << "Usage : ./PmergeMe < int numbers >..." << std::endl;
       return (false);
   }
@@ -76,15 +73,14 @@ int main(int ac, char **av) {
     try {
         clock_t start = clock();
         pm.fillArray();
-        std::cout << "Before:\t";
-        pm.printArray();
-        pm.fordJohnsonSort();
-        std::cout << "After:\t";
-        pm.printArray();
+        pm.printArray("Before");
+        pm.fordJohnsonSortVector();
+        pm.printArray("After");
         clock_t end = clock();
         double elapsed_time = static_cast<double>(end - start) / CLOCKS_PER_SEC / 1000 * 1e6;
         std::cout << std::fixed << std::setprecision(5);
         std::cout << "Time to process a range of " << ac - 1 << " numbers: " << elapsed_time << " us" << std::endl;
+        pm.checkIfSorted();
     } catch (std::exception& e) {
         std::cerr << RED "Error: " << e.what() << RESET << std::endl;
     }
