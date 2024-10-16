@@ -59,10 +59,10 @@ int Calendar::dateToInt(const std::string date) {
   int result;
 
   iss >> year >> dash >> month >> dash >> day;
-  if (year > 0 && (year > _currentYear || year * 10000 < year))
-    year = _currentYear + 1;
   if (year < _minYear)
     return (INT_MIN);
+  if (year > 0 && (year > _currentYear || year * 10000 < year))
+    year = _currentYear + 1;
   result = (std::abs(year) * 10000) + (month * 100) + day;
   if (year < 0)
     result *= -1;
