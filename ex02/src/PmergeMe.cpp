@@ -64,8 +64,6 @@ void PmergeMe::putInSmallAndLarge(std::vector<std::pair<int, int> >& pairs) {
     }
 }
 
-
-
 void PmergeMe::fordJohnsonSortVector(void) {
     std::vector<std::pair<int, int> > pairs;
     int                               oddOneOut = -1;
@@ -85,8 +83,6 @@ void PmergeMe::fordJohnsonSortVector(void) {
 
     _arr = _larges;
 }
-
-
 
 void PmergeMe::fillArray(void) {
   for (size_t i = 0; _av[i]; ++i) {
@@ -156,9 +152,9 @@ bool PmergeMe::isSorted(std::vector<int> arr) {
 
 void PmergeMe::checkIfSorted(void) {
   if (isSorted(_arr))
-            std::cout << GREEN "The array is sorted !" RESET << std::endl;
-        else
-            std::cout << RED "The array is not sorted !" RESET << std::endl;
+    std::cout << GREEN "The array is sorted !" RESET << std::endl;
+  else
+    std::cout << RED "The array is not sorted !" RESET << std::endl;
 }
 
 void PmergeMe::printArray(const std::string str) {
