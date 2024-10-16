@@ -141,6 +141,14 @@ void BitcoinExchange::processLine(const std::string line, bool *isFirstLine) {
     }
 }
 
+void BitcoinExchange::writeMinYearInTheCalendar(const std::string &line) {
+  std::istringstream iss(line);
+  int year;
+
+  iss >> year;
+  this->_calendar.assignMinYear(year);
+}
+
 void BitcoinExchange::searchBitcoinValue(void) {
   FileSrc            file;
   std::stringstream *dataFile = NULL;
@@ -158,6 +166,7 @@ void BitcoinExchange::searchBitcoinValue(void) {
     return;
   }
   this->fillMap(dataFile);
+  this->writeMinYearInTheCalendar(_datas.begin()->first);
   while (std::getline(*inFile, line)) {
     this->processLine(line, &isFirstLine);
   }

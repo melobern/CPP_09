@@ -23,12 +23,14 @@
 class Calendar {
  private:
   static const int                       _daysInMonth[13];
+  int                                    _currentYear;
+  int                                    _minYear;
 
   Calendar &operator=(const Calendar &src);
   Calendar(const Calendar &src);
 
   bool        isLeap(const int year);
-  int         getCurrentYear(void);
+  int         initCurrentYear(void);
 
  public:
   Calendar(void);
@@ -38,6 +40,13 @@ class Calendar {
   std::string findClosestDate(const std::string date,
                               const std::map<std::string, float> map);
   bool        dateIsWrong(const int dd, const int mm, const int yy);
+  void        assignMinYear(int year);
+  int         getCurrentYear(void) const;
+  int         getMinYear(void) const;
+  class InvalidDate : public std::exception {
+   public:
+    virtual const char *what() const throw();
+  };
 };
 
 #endif  // EX00_INCLUDES_CALENDAR_HPP_
