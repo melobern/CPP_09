@@ -12,15 +12,6 @@
 
 #include "../includes/Colors.hpp"
 #include "../includes/PmergeMe.hpp"
-// Il y a 5 étapes je vais essayer de t expliquer et de les illustrer avec un exemple :
-// Tu as cette entrée : 33 2 15 8 99 4
-
-//     -faire des paires avec le plus grand d un coté et le plus petit de l autre  : 33 2 15 8 99 4 = >  2 33 8 15 4 99
-//     -trier les paires par leur plus grand nombre par récursion : 2 33 8 15 4 99 = > 8 15 2 33 4 99
-//     -Mettre les plus petits dans un tableau et les plus grands dans un autre : 8 2 4 | 15 33 99
-//     -Vu que les paires étaient triées le tableau des grands est trié, tu ajoutes le petit de la première paire 8 au premier index du tableau des grands : 2 4 | 8 15 33 99
-//     Tu ajoutes les petits dans la tableau des grands avec un binary search (recherche dichotomique)
-//     Pour optimiser la dernière étape tu utilises la suite de Jacobsthal (https://fr.wikipedia.org/wiki/Suite_de_Jacobsthal)
 
 static bool isValidNumber(const std::string arg) {
   size_t size = arg.size();
@@ -73,14 +64,24 @@ int main(int ac, char **av) {
     try {
         clock_t start = clock();
         pm.fillArray();
-        pm.printArray("Before");
         pm.fordJohnsonSortVector();
-        pm.printArray("After");
         clock_t end = clock();
+
+        pm.printArray("After");
         double elapsed_time = static_cast<double>(end - start) / CLOCKS_PER_SEC / 1000 * 1e6;
         std::cout << std::fixed << std::setprecision(5);
         std::cout << "Time to process a range of " << ac - 1 << " numbers: " << elapsed_time << " us" << std::endl;
-        pm.checkIfSorted();
+
+        start = clock();
+        pm.fillList(av + 1);
+        pm.fordJohnsonSortList();
+        end = clock();
+
+        elapsed_time = static_cast<double>(end - start) / CLOCKS_PER_SEC / 1000 * 1e6;
+        std::cout << "Time to process a range of " << ac - 1 << " numbers: " << elapsed_time << " us" << std::endl;
+        // CHECK IF SORTED : COMMENTED FOR THE SUBJECT
+        // pm.checkIfSorted();
+        // pm.checkIfSortedList();
     } catch (std::exception& e) {
         std::cerr << RED "Error: " << e.what() << RESET << std::endl;
     }

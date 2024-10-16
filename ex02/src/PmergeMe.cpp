@@ -15,7 +15,14 @@
 
 PmergeMe::PmergeMe(void) { return; }
 
-PmergeMe::PmergeMe(char **av) : _av(av) { return; }
+PmergeMe::PmergeMe(char **av) : _av(av) {
+  std::cout << "Before:\t";
+  for (size_t i = 0; av[i]; ++i) {
+    std::cout << av[i] << " ";
+  }
+  std::cout << std::endl;
+  return;
+}
 
 PmergeMe::PmergeMe(const PmergeMe& src) : _av(src._av) {
   *this = src;
@@ -35,14 +42,7 @@ static bool comparePairs(const std::pair<int, int>& a, const std::pair<int, int>
     return (a.second < b.second);
 }
 
-void PmergeMe::insertLastNumbers(int oddOneOut) {
-  std::vector<int>::iterator it = std::upper_bound(_larges.begin(), _larges.end(), oddOneOut);
-  if (it == _larges.end() || *it != oddOneOut) {
-      _larges.insert(it, oddOneOut);
-  }
-}
-
-void insertNumber(std::vector<int>& array, int number) {
+void PmergeMe::insertNumber(std::vector<int>& array, int number) {
     std::vector<int>::iterator it = std::upper_bound(array.begin(), array.end(), number);
     array.insert(it, number);
 }
@@ -64,13 +64,7 @@ void PmergeMe::putInSmallAndLarge(std::vector<std::pair<int, int> >& pairs) {
     }
 }
 
-bool PmergeMe::isSorted(std::vector<int> arr) {
-    for (size_t i = 0; i + 1 < arr.size(); ++i) {
-        if (arr[i] > arr[i + 1])
-            return (false);
-    }
-    return (true);
-}
+
 
 void PmergeMe::fordJohnsonSortVector(void) {
     std::vector<std::pair<int, int> > pairs;
@@ -92,6 +86,81 @@ void PmergeMe::fordJohnsonSortVector(void) {
     _arr = _larges;
 }
 
+
+
+void PmergeMe::fillArray(void) {
+  for (size_t i = 0; _av[i]; ++i) {
+    std::string arg(_av[i]);
+    _arr.push_back(atoi(arg.c_str()));
+  }
+}
+
+void PmergeMe::buildPairsList(std::list<std::pair<int, int> >& pairs) {
+  std::list<int>::iterator it = _list.begin();
+  while (it != _list.end()) {
+    int first = *it;
+    ++it;
+    if (it == _list.end())
+      break;
+    int second = *it;
+    if (first < second)
+      pairs.push_back(std::make_pair(first, second));
+    else
+      pairs.push_back(std::make_pair(second, first));
+    ++it;
+  }
+}
+
+void PmergeMe::putInSmallAndLargeList(std::list<std::pair<int, int> >& pairs) {
+  for (std::list<std::pair<int, int> >::iterator it = pairs.begin(); it != pairs.end(); ++it) {
+    _smallsList.push_back(it->first);
+    _largesList.push_back(it->second);
+  }
+}
+
+void insertNumberList(std::list<int>& list, int number) {
+  std::list<int>::iterator it = std::upper_bound(list.begin(), list.end(), number);
+  list.insert(it, number);
+}
+
+void PmergeMe::fordJohnsonSortList(void) {
+  std::list<std::pair<int, int> > pairs;
+  int                             oddOneOut = -1;
+
+  buildPairsList(pairs);
+  if (_list.size() % 2 != 0)
+    oddOneOut = _list.back();
+
+  pairs.sort(comparePairs);
+  putInSmallAndLargeList(pairs);
+
+  std::list<int>::iterator it = _smallsList.begin();
+  while (it != _smallsList.end()) {
+      int number = *it;
+      insertNumberList(_largesList, number);
+      ++it;
+  }
+  if (oddOneOut != -1)
+      insertNumberList(_largesList, oddOneOut);
+
+  _list = _largesList;
+}
+
+bool PmergeMe::isSorted(std::vector<int> arr) {
+    for (size_t i = 0; i + 1 < arr.size(); ++i) {
+        if (arr[i] > arr[i + 1])
+            return (false);
+    }
+    return (true);
+}
+
+void PmergeMe::checkIfSorted(void) {
+  if (isSorted(_arr))
+            std::cout << GREEN "The array is sorted !" RESET << std::endl;
+        else
+            std::cout << RED "The array is not sorted !" RESET << std::endl;
+}
+
 void PmergeMe::printArray(const std::string str) {
   std::cout << str << ":\t";
   for (size_t i = 0; i < _arr.size(); ++i) {
@@ -100,11 +169,48 @@ void PmergeMe::printArray(const std::string str) {
   std::cout << std::endl;
 }
 
-void PmergeMe::fillArray(void) {
-  for (size_t i = 0; _av[i]; ++i) {
-    std::string arg(_av[i]);
-    _arr.push_back(atoi(arg.c_str()));
+bool PmergeMe::isSortedList(std::list<int> list) {
+  std::list<int>::iterator it = list.begin();
+  while (it != list.end()) {
+    std::list<int>::iterator it2 = it;
+    ++it2;
+    if (it2 == list.end())
+      break;
+    if (*it > *it2)
+      return (false);
+    ++it;
+    ++it;
   }
+  return (true);
+}
+
+void PmergeMe::checkIfSortedList(void) {
+  if (isSortedList(_list))
+    std::cout << GREEN "The list is sorted !" RESET << std::endl;
+  else
+    std::cout << RED "The list is not sorted !" RESET << std::endl;
+}
+
+void PmergeMe::printList(void) {
+  for (std::list<int>::iterator it = _list.begin(); it != _list.end(); ++it) {
+    std::cout << *it << " ";
+  }
+  std::cout << std::endl;
+}
+
+void PmergeMe::fillList(char **av) {
+  for (size_t i = 0; av[i]; ++i) {
+    std::string arg(av[i]);
+    _list.push_back(atoi(arg.c_str()));
+  }
+}
+
+void PmergeMe::printThisList(std::string name, std::list<int> list) {
+  std::cout << BRIGHT_YELLOW << name << "\t" << RESET << std::endl;
+  for (std::list<int>::iterator it = list.begin(); it != list.end(); ++it) {
+    std::cout << *it << "\t ";
+  }
+  std::cout << std::endl;
 }
 
 void PmergeMe::printPairs(std::vector<std::pair<int, int> > pairs) {
@@ -115,9 +221,10 @@ void PmergeMe::printPairs(std::vector<std::pair<int, int> > pairs) {
   std::cout << BRIGHT_YELLOW << "END OF PAIRS" << RESET << std::endl;
 }
 
-void PmergeMe::checkIfSorted(void) {
-  if (isSorted(_arr))
-            std::cout << GREEN "The array is sorted !" RESET << std::endl;
-        else
-            std::cout << RED "The array is not sorted !" RESET << std::endl;
+void PmergeMe::printPairsList(std::list<std::pair<int, int> > pairs) {
+  std::cout << BRIGHT_YELLOW << "PAIRS" << "\t" << RESET << std::endl;
+  for (std::list<std::pair<int, int> >::iterator it = pairs.begin(); it != pairs.end(); ++it) {
+    std::cout << it->first << " " << it->second << std::endl;
+  }
+  std::cout << BRIGHT_YELLOW << "END OF PAIRS" << RESET << std::endl;
 }
