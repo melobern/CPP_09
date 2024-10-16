@@ -24,6 +24,7 @@
 #include <utility>
 #include <ctime>
 #include <sys/time.h>
+#include <list>
 
 class PmergeMe {
  private:
@@ -31,9 +32,9 @@ class PmergeMe {
   std::vector<int> _smalls;
   std::vector<int> _larges;
 
-  // std::list<int> _list;
-  // std::list<int> _smallsList;
-  // std::list<int> _largesList;
+  std::list<int> _list;
+  std::list<int> _smallsList;
+  std::list<int> _largesList;
 
   char      **_av;
 
@@ -41,10 +42,19 @@ class PmergeMe {
   PmergeMe& operator=(const PmergeMe& src);
   PmergeMe(const PmergeMe& src);
 
-  void insertLastNumbers(int oddOneOut);
+  void insertNumber(std::vector<int>& array, int number);
   void buildPairs(std::vector<std::pair<int, int> >& pairs);
   void putInSmallAndLarge(std::vector<std::pair<int, int> > &pairs);
-  void printPairs(std::vector<std::pair<int, int> > pairs);bool isSorted(std::vector<int> arr);
+
+  void buildPairsList(std::list<std::pair<int, int> >& pairs);
+  void putInSmallAndLargeList(std::list<std::pair<int, int> >& pairs);
+  // Utils
+  void printPairs(std::vector<std::pair<int, int> > pairs);
+  void printPairsList(std::list<std::pair<int, int> > pairs);
+  void printThisList(std::string name, std::list<int> list);
+  bool isSortedList(std::list<int> list);
+  bool isSorted(std::vector<int> arr);
+
  public:
   explicit PmergeMe(char **av);
   ~PmergeMe(void);
@@ -52,6 +62,11 @@ class PmergeMe {
   void fordJohnsonSortVector(void);
   void printArray(const std::string str);
   void checkIfSorted(void);
+  void checkIfSortedList(void);
+
+  void fillList(char **av);
+  void printList(void);
+  void fordJohnsonSortList(void);
 };
 
 #endif  //  EX02_INCLUDES_PMERGEME_HPP_
