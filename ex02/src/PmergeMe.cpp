@@ -31,19 +31,73 @@ PmergeMe& PmergeMe::operator=(PmergeMe const& src) {
 
 PmergeMe::~PmergeMe() { return; }
 
-bool PmergeMe::isValidNumber(const std::string arg) {
-  size_t size = arg.size();
+static bool comparePairs(const std::pair<int, int>& a, const std::pair<int, int>& b) {
+    return (a.second < b.second);
+}
 
-  if (arg.empty() || arg[0] == '-')
-    return (false);
-  for (size_t len = 0; len < size; len++) {
-    if (!isdigit(arg[len]))
-      return (false);
+void PmergeMe::insertLastNumbers(int oddOneOut) {
+  std::vector<int>::iterator it = std::upper_bound(_larges.begin(), _larges.end(), oddOneOut);
+  if (it == _larges.end() || *it != oddOneOut) {
+      _larges.insert(it, oddOneOut);
   }
-  if (std::atoll(arg.c_str()) > INT_MAX) {
-    return (false);
+}
+
+void insertNumber(std::vector<int>& array, int number) {
+    std::vector<int>::iterator it = std::upper_bound(array.begin(), array.end(), number);
+    array.insert(it, number);
+}
+
+void PmergeMe::buildPairs(std::vector<std::pair<int, int> >& pairs) {
+  for (size_t i = 0; i + 1 < _arr.size(); i += 2) {
+    if (_arr[i] < _arr[i + 1]) {
+      pairs.push_back(std::make_pair(_arr[i], _arr[i + 1]));
+    } else {
+      pairs.push_back(std::make_pair(_arr[i + 1], _arr[i]));
+    }
   }
-  return (true);
+}
+
+void PmergeMe::putInSmallAndLarge(std::vector<std::pair<int, int> >& pairs) {
+    for (size_t i = 0; i < pairs.size(); ++i) {
+      _smalls.push_back(pairs[i].first);
+      _larges.push_back(pairs[i].second);
+    }
+}
+
+bool PmergeMe::isSorted(std::vector<int> arr) {
+    for (size_t i = 0; i + 1 < arr.size(); ++i) {
+        if (arr[i] > arr[i + 1])
+            return (false);
+    }
+    return (true);
+}
+
+void PmergeMe::fordJohnsonSortVector(void) {
+    std::vector<std::pair<int, int> > pairs;
+    int                               oddOneOut = -1;
+
+    buildPairs(pairs);
+    if (_arr.size() % 2 != 0)
+        oddOneOut = _arr.back();
+
+    std::sort(pairs.begin(), pairs.end(), comparePairs);
+    putInSmallAndLarge(pairs);
+
+    for (size_t i = 0; i < _smalls.size(); ++i)
+        insertNumber(_larges, _smalls[i]);
+
+    if (oddOneOut != -1)
+        insertNumber(_larges, oddOneOut);
+
+    _arr = _larges;
+}
+
+void PmergeMe::printArray(const std::string str) {
+  std::cout << str << ":\t";
+  for (size_t i = 0; i < _arr.size(); ++i) {
+    std::cout << _arr[i] << " ";
+  }
+  std::cout << std::endl;
 }
 
 void PmergeMe::fillArray(void) {
@@ -53,81 +107,17 @@ void PmergeMe::fillArray(void) {
   }
 }
 
-bool comparePairs(const std::pair<int, int>& a, const std::pair<int, int>& b) {
-    return (a.second < b.second);
-}
-
-void PmergeMe::fordJohnsonSort(void) {
-  // Étape 1 : Faire des paires
-  std::vector<std::pair<int, int> > pairs;
-
-  for (size_t i = 0; i + 1 < _arr.size(); i += 2) {
-    if (_arr[i] < _arr[i + 1]) {
-      pairs.push_back(std::make_pair(_arr[i], _arr[i + 1]));
-    } else {
-      pairs.push_back(std::make_pair(_arr[i + 1], _arr[i]));
-    }
-  }
+void PmergeMe::printPairs(std::vector<std::pair<int, int> > pairs) {
+  std::cout << BRIGHT_YELLOW << "PAIRS" << "\t" << RESET << std::endl;
   for (size_t i = 0; i < pairs.size(); ++i) {
     std::cout << pairs[i].first << " " << pairs[i].second << std::endl;
   }
-  if (_arr.size() % 2 != 0) {
-    pairs.push_back(std::make_pair(_arr.back(), _arr.back()));
-  }
-
-  // Étape 2 : Trier les paires par leur plus grand nombre
-  std::sort(pairs.begin(), pairs.end(), comparePairs);
-
-  // Étape 3 : Séparer les petits et les grands éléments
-  std::vector<int> smalls, larges;
-  for (size_t i = 0; i < pairs.size(); ++i) {
-    smalls.push_back(pairs[i].first);
-    larges.push_back(pairs[i].second);
-  }
-
-  // Étape 4 : Insérer le plus petit élément dans le tableau des grands
-
-  _sorted.push_back(larges[0]);
-
-  for (size_t i = 1; i < larges.size(); ++i) {
-    _sorted.insert(std::upper_bound(_sorted.begin(), _sorted.end(), larges[i]),
-                  larges[i]);
-  }
-  printArray();
-// Étape 5 : Insérer les autres petits éléments avec une recherche dichotomique
-for (size_t i = 0; i < smalls.size(); ++i) {
-    // Trouver la position d'insertion
-    std::vector<int>::iterator it = std::upper_bound(_sorted.begin(), _sorted.end(), smalls[i]);
-    
-    // Insérer l'élément seulement s'il n'est pas déjà présent
-    if (it == _sorted.end() || *it != smalls[i]) {
-        _sorted.insert(it, smalls[i]);
-    }
-}
-  // Étape 5 : Insérer les autres petits éléments avec une recherche
-  // dichotomique
-  // for (size_t i = 0; i < smalls.size(); ++i) {
-  //   _sorted.insert(std::upper_bound(_sorted.begin(), _sorted.end(), smalls[i]),
-  //                 smalls[i]);
-  // }
-  printArray();
-
-  // Copier le résultat trié dans le tableau original
-  _arr = _sorted;
+  std::cout << BRIGHT_YELLOW << "END OF PAIRS" << RESET << std::endl;
 }
 
-const char* PmergeMe::invalidValueException::what() const throw() {
-  return ("Invalid value.");
-}
-
-void PmergeMe::printArray(void) {
-  std::cout << std::endl << RED << "_arr " << RESET << " : " << std::endl;
-  for (size_t i = 0; i < _arr.size(); ++i) {
-    std::cout << _arr[i] << " ";
-  }
-  std::cout << std::endl << RED << "_sorted " << RESET << " : " << std::endl;
-for (size_t i = 0; i < _sorted.size(); ++i) {
-    std::cout << _sorted[i] << " ";
-  }
-  std::cout << std::endl << std::endl;
+void PmergeMe::checkIfSorted(void) {
+  if (isSorted(_arr))
+            std::cout << GREEN "The array is sorted !" RESET << std::endl;
+        else
+            std::cout << RED "The array is not sorted !" RESET << std::endl;
 }
