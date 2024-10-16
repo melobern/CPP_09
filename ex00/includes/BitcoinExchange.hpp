@@ -12,30 +12,32 @@
 
 #ifndef EX00_INCLUDES_BITCOINEXCHANGE_HPP_
 #define EX00_INCLUDES_BITCOINEXCHANGE_HPP_
-# include <iostream>
-# include <string>
-# include <map>
-# include "Calendar.hpp"
+#include <iostream>
+#include <map>
+#include <string>
+
+#include "../includes/Calendar.hpp"
 
 class BitcoinExchange {
  private:
   std::map<std::string, float> _datas;
-  static const std::string     _dataFile;
-  std::string                  _inputFile;
-  Calendar                     _calendar;
+  static const std::string _dataFile;
+  std::string _inputFile;
+  Calendar _calendar;
 
   BitcoinExchange(void);
   BitcoinExchange &operator=(const BitcoinExchange &src);
   BitcoinExchange(const BitcoinExchange &src);
   void fillMap(std::stringstream *dataFile);
+  void writeMinYearInTheCalendar(const std::string &line);
   void dataLineValidation(const std::string &line, char sep);
   void printBitcoinValue(std::string line, std::map<std::string, float> map);
   void processLine(const std::string line, bool *isFirstLine);
-  class InvalidDataLine : public std::exception {
+  class InvalidDate : public std::exception {
    public:
     virtual const char *what() const throw();
   };
-  class InvalidDate : public std::exception {
+  class InvalidDataLine : public std::exception {
    public:
     virtual const char *what() const throw();
   };
